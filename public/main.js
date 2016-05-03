@@ -1,8 +1,15 @@
+// fix updating data
+// make it look pretty
+
 var tweets = {};
-var chart = {};
+var chart = undefined;
 
 function removeTimeFromDate(timestamp) {
   return timestamp.split(" ")[0];
+}
+
+function getMonth(date) {
+  return date.split('-')[1];
 }
 
 function getTotalTweetsPerDay(filter, excludeRts) {
@@ -59,9 +66,10 @@ function getTotalTweetsPerDay(filter, excludeRts) {
 function buildGraph(filter, excludeRts) {
   var twts = getTotalTweetsPerDay("", excludeRts);
   var twts_f = getTotalTweetsPerDay(filter, excludeRts);
-  $('.chartjs-hidden-iframe').remove();
-  $('canvas').remove();
-  $('body').prepend('<canvas id="tweets"></canvas>')
+
+  if (chart != undefined) {
+    chart.destroy();
+  }
 
   var ctx = $("#tweets");
   chart = new Chart(ctx, {
@@ -70,21 +78,24 @@ function buildGraph(filter, excludeRts) {
       labels: twts.labels,
       datasets: [
         {
-          label: "Trump tweets",
-          type: 'line',
-          fill: false,
-          data: twts.totals,
-          borderColor: "#d65454",
-          backgroundColor: "#d65454"
-        },
-        {
           label: filter + " mentions",
           type: 'bar',
           data: twts_f.totals,
           borderColor: "#4a8fd3",
           backgroundColor: "#4a8fd3"
+        },
+        {
+          label: "Trump tweets",
+          type: 'line',
+          fill: true,
+          data: twts.totals,
+          borderColor: "#d65454",
+          backgroundColor: "#d65454"
         }
       ]
+    },
+    settings: {
+      defaultColor: "#FFFFFF"
     }
   });
 }
@@ -95,6 +106,9 @@ function getIncludeRT() {
 
 $(document).on('ready', function() {
   console.log("downloading tweets...");
+
+  Chart.defaults.global.defaultColor = "#FFFFFF";
+
   Papa.parse("tweets.csv", {
   	download: true,
   	complete: function(results) {
@@ -110,8 +124,6 @@ $(document).on('ready', function() {
   });
 
   $('#rt').change(function() {
-    console.log($(this).val());
-    console.log(getIncludeRT());
     buildGraph($('#search').val(), getIncludeRT());
   });
 
