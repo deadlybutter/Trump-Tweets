@@ -89,8 +89,8 @@ function buildGraph(filter, excludeRts) {
           type: 'line',
           fill: true,
           data: twts.totals,
-          borderColor: "#d65454",
-          backgroundColor: "#d65454"
+          borderColor: "#6ed3f2",
+          backgroundColor: "#6ed3f2"
         }
       ]
     },
