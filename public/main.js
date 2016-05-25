@@ -38,8 +38,7 @@ function getTotalTweetsPerDay(filter, excludeRts) {
     }
 
     var txt = tweet[2].toLowerCase();
-
-    if (excludeRts && txt.startsWith("\"")) {
+    if (excludeRts && (txt.startsWith("\"") || txt.startsWith("RT"))) {
       return;
     }
 
